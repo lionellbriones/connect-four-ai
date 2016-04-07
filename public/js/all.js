@@ -40,6 +40,7 @@ $(document).ready(function () {
         for (var j = width; j >= 1; j--) {
           var boxTemplate = '<li class="box-holder">' +
               '<div id="slot_' + i + '_' + j + '" class="slot">' +
+              i + ':' + j +
               '</div>' +
               '</li>';
           boxes.push(boxTemplate);
@@ -83,7 +84,7 @@ $(document).ready(function () {
           return false;
         }
 
-        j++;
+        i++;
       }
 
       return true;
@@ -157,8 +158,9 @@ $(document).ready(function () {
     };
 
     var finishGame = function () {
-
-    }
+      $('.board-holder').hide();
+      moves = 0;
+    };
 
     var checkMoves = function () {
       moves++;
@@ -186,13 +188,13 @@ $(document).ready(function () {
 
       if (checkWinner(i, colId)) {
         alert('Player ' + turn + ' won!');
-        $('.board-holder').hide();
+        finishGame();
       } else {
         if (checkMoves()) {
           changePlayer();
         } else {
           alert('The game is Draw!');
-          $('.board-holder').hide();
+          finishGame();
         }
       }
     };
