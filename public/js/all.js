@@ -25,6 +25,7 @@ $(document).ready(function () {
 
       $boardBody.empty();
       $boardHead.empty();
+      $('.board-holder').show();
 
       for (var t = 1; t <= width; t++) {
         var template = '<button data-id="' + t +
@@ -49,18 +50,129 @@ $(document).ready(function () {
       $boardHead.append(drops.join(''));
     };
 
-    var playerDone = function (id) {
-      for (var i = 1; i <= height; i++) {
-        if (
-          !$('#slot_' + i + '_' + id).hasClass('player-1') &&
-          !$('#slot_' + i + '_' + id).hasClass('player-2')) {
+    var checkHorizontal = function (row, col) {
+      var max = col + 3;
 
-          $('#slot_' + i + '_' + id).addClass('player-' + turn);
+      for (var i = col; i <= max; i++) {
+        if (!$('#slot_' + row + '_' + i).hasClass('player-' + turn)) {
+          return false;
+        }
+      }
+
+      return true;
+    };
+
+    var checkVertical = function (row, col) {
+      var max = row + 3;
+
+      for (var j = row; j <= max; j++) {
+        if (!$('#slot_' + j + '_' + col).hasClass('player-' + turn)) {
+          return false;
+        }
+      }
+
+      return true;
+    };
+
+    var checkDiagonalUp = function (row, col) {
+      var max = row + 3;
+
+      i = col;
+      for (var j = row; j <= max; j++) {
+        if (!$('#slot_' + j + '_' + i).hasClass('player-' + turn)) {
+          return false;
+        }
+
+        j++;
+      }
+
+      return true;
+    };
+
+    var checkDiagonalDown = function (row, col) {
+      console.log(row, col);
+      var max = col + 3;
+
+      j = row;
+      for (var i = col; i <= max; i++) {
+        if (!$('#slot_' + j + '_' + i).hasClass('player-' + turn)) {
+          return false;
+        }
+
+        j--;
+      }
+
+      return true;
+    };
+
+    var checkWinner = function (row, col) {
+      //check horizontal
+      var precedingCol = col - 3;
+      for (var i = precedingCol; i <= col; i++) {
+        if (i > 0 && $('#slot_' + row + '_' + i).hasClass('player-' + turn)) {
+          if (checkHorizontal(row, i)) {
+            return true;
+          }
+        }
+      }
+
+      //check vertical
+      var precedingRow = row - 3;
+      for (var j = precedingRow; j <= row; j++) {
+        if (j > 0 && $('#slot_' + j + '_' + col).hasClass('player-' + turn)) {
+          if (checkVertical(j, col)) {
+            return true;
+          }
+        }
+      }
+
+      //check diagonal up
+      //i=column j=row
+      precedingCol = col - 3;
+      j = row - 3;
+      for (i = precedingCol; i <= col; i++) {
+        if (j > 0 && $('#slot_' + j + '_' + i).hasClass('player-' + turn)) {
+          if (checkDiagonalUp(j, i)) {
+            return true;
+          }
+        }
+
+        j++;
+      }
+
+      //check diagonal down
+      //i=column j=row
+      precedingCol = col - 3;
+      j = row + 3;
+      for (i = precedingCol; i <= col; i++) {
+        if (j > 0 && $('#slot_' + j + '_' + i).hasClass('player-' + turn)) {
+          if (checkDiagonalDown(j, i)) {
+            console.log('dd');
+            return true;
+          }
+        }
+
+        j--;
+      }
+
+      return false;
+    };
+
+    var playerDone = function (colId) {
+      for (var i = 1; i <= height; i++) {
+        if (!$('#slot_' + i + '_' + colId).hasClass('player')) {
+
+          $('#slot_' + i + '_' + colId).addClass('player-' + turn).addClass('player');
           break;
         }
       }
 
-      changePlayer();
+      if (checkWinner(i, colId)) {
+        alert('Player ' + turn + ' won!');
+        $('.board-holder').hide();
+      } else {
+        changePlayer();
+      }
     };
 
     var events = function () {
@@ -74,7 +186,6 @@ $(document).ready(function () {
 
     var init = function () {
       events();
-      loadBoard();
     };
 
     return {

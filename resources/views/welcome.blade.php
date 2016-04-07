@@ -13,7 +13,7 @@
         <button id="start" type="button" name="button" class="btn btn-default">Start Game</button>
       </div>
 
-      <div class="board-container board-holder">
+      <div class="board-container board-holder" style="display: none">
         <h3>Player <span id="player-name"></span></h3>
         <div id="board-head"></div>
         <ul id="board-body" class="boxes"></ul>
