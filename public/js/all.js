@@ -30,7 +30,7 @@ $(document).ready(function () {
       for (var t = 1; t <= width; t++) {
         var template = '<button data-id="' + t +
               '" class="dropper btn btn-success" type="button">' +
-              '<span class="glyphicon glyphicon-arrow-down">' + t + '</span>' +
+              '<span class="glyphicon glyphicon-arrow-down"></span>' +
             '</button>';
         drops.push(template);
       }
@@ -39,7 +39,6 @@ $(document).ready(function () {
         for (var j = width; j >= 1; j--) {
           var boxTemplate = '<li class="box-holder">' +
               '<div id="slot_' + i + '_' + j + '" class="slot">' +
-              i + ':' + j +
               '</div>' +
               '</li>';
           boxes.push(boxTemplate);
@@ -90,7 +89,6 @@ $(document).ready(function () {
     };
 
     var checkDiagonalDown = function (row, col) {
-      console.log(row, col);
       var max = col + 3;
 
       j = row;
@@ -147,7 +145,6 @@ $(document).ready(function () {
       for (i = precedingCol; i <= col; i++) {
         if (j > 0 && $('#slot_' + j + '_' + i).hasClass('player-' + turn)) {
           if (checkDiagonalDown(j, i)) {
-            console.log('dd');
             return true;
           }
         }
