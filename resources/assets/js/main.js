@@ -9,13 +9,59 @@ $(document).ready(function () {
     var boardArr = [];
     var turn = 0;
     var moves = 0;
+    var isAi = false;
+    var aiFull = [];
+    var lastColumn = 0;
 
     var _player1 = 1;
     var _player2 = 2;
 
+    var getDiff = function (choices) {
+      var newChoices = [];
+      for (var key in choices) {
+        if (aiFull.indexOf(choices[key]) < 0) {
+          newChoices.push(choices[key]);
+        }
+      }
+
+      return newChoices;
+    };
+
+    var aiLogic = function () {
+      var choices = [1, 2, 3, 4, 5, 6, 7];
+
+      //minimize to near;
+      if (lastColumn > 0) {
+        choices = [];
+        if (lastColumn - 1 > 0) {
+          choices.push(lastColumn - 1);
+        }
+
+        choices.push(lastColumn);
+        choices.push(lastColumn + 1);
+      }
+
+      //remove full from choices
+      choices = getDiff(choices);
+
+      var index = Math.floor(Math.random() * choices.length);
+      var num = choices[index];
+      console.log(choices, index, num);
+
+      if (playerDone(num) === false) {
+        aiFull.push(num);
+        aiLogic();
+      } else {
+        aiFull = [];
+      }
+    };
+
     var changePlayer = function () {
       turn = (turn === _player1) ? _player2 : _player1;
       $playerName.text(turn);
+      if (isAi && turn === _player2) {
+        aiLogic();
+      }
     };
 
     var loadBoard = function () {
@@ -105,7 +151,7 @@ $(document).ready(function () {
       return true;
     };
 
-    var checkWinner = function (row, col) {
+    var checkWinner = function (row, col, turn) {
       //check horizontal
       var precedingCol = col - 3;
       for (var i = precedingCol; i <= col; i++) {
@@ -172,9 +218,13 @@ $(document).ready(function () {
     };
 
     var playerDone = function (colId) {
+      lastColumn = colId;
       //check if full column
       if ($('#slot_' + height + '_' + colId).hasClass('player')) {
-        alert('The column is full.');
+        if (turn === _player1 || !isAi) {
+          alert('The column is full.');
+        }
+
         return false;
       }
 
@@ -186,7 +236,7 @@ $(document).ready(function () {
         }
       }
 
-      if (checkWinner(i, colId)) {
+      if (checkWinner(i, colId, turn)) {
         alert('Player ' + turn + ' won!');
         finishGame();
       } else {
@@ -197,11 +247,21 @@ $(document).ready(function () {
           finishGame();
         }
       }
+
+      return true;
     };
 
     var events = function () {
       //Events
-      $('#start').on('click', loadBoard);
+      $('#start').on('click', function () {
+        isAi = false;
+        loadBoard();
+      });
+
+      $('#start_ai').on('click', function () {
+        isAi = true;
+        loadBoard();
+      });
 
       $boardHead.on('click', '.dropper', function () {
         playerDone($(this).data('id'));
