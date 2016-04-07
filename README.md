@@ -1,4 +1,4 @@
 # Connect Four with AI
 
-[Heroku link](https://damp-earth-54351.herokuapp.com/)
+[Heroku link](https://evening-tundra-48194.herokuapp.com/)
 
