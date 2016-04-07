@@ -8,6 +8,7 @@ $(document).ready(function () {
     var board = [];
     var boardArr = [];
     var turn = 0;
+    var moves = 0;
 
     var _player1 = 1;
     var _player2 = 2;
@@ -155,7 +156,26 @@ $(document).ready(function () {
       return false;
     };
 
+    var finishGame = function () {
+
+    }
+
+    var checkMoves = function () {
+      moves++;
+      if (moves >= 42) {
+        return false;
+      }
+
+      return true;
+    };
+
     var playerDone = function (colId) {
+      //check if full column
+      if ($('#slot_' + height + '_' + colId).hasClass('player')) {
+        alert('The column is full.');
+        return false;
+      }
+
       for (var i = 1; i <= height; i++) {
         if (!$('#slot_' + i + '_' + colId).hasClass('player')) {
 
@@ -168,7 +188,12 @@ $(document).ready(function () {
         alert('Player ' + turn + ' won!');
         $('.board-holder').hide();
       } else {
-        changePlayer();
+        if (checkMoves()) {
+          changePlayer();
+        } else {
+          alert('The game is Draw!');
+          $('.board-holder').hide();
+        }
       }
     };
 
